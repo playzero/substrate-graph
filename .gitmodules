@@ -1,3 +1,6 @@
 [submodule "packages/substrate-archive"]
 	path = packages/substrate-archive
 	url = https://github.com/playzero/substrate-archive
+[submodule "packages/substrate"]
+	path = packages/substrate
+	url = https://github.com/playzero/substrate
