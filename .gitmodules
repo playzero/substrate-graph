@@ -4,3 +4,6 @@
 [submodule "packages/substrate"]
 	path = packages/substrate
 	url = https://github.com/playzero/substrate
+[submodule "packages/polkadot"]
+	path = packages/polkadot
+	url = https://github.com/paritytech/polkadot

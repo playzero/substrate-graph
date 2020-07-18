@@ -13,4 +13,7 @@ runtimes/*/Cargo.lock
 **/node_modules
 .idea/*
 
+# local data dir
 ./data
+./bin
+.env

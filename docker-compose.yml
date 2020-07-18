@@ -1,68 +1,72 @@
 version: '3'
 
-services:
+# 0 postgres
+# 1 polkadot / substrate node
+# 2 archiver
+# 3 hasura
+# 4 adminer ( optional )
 
-  graphql:
-    image: hasura/graphql-engine:latest
-    container_name: graphql
-    ports:
-    - '18080:8080'
-    depends_on:
-    - 'postgres'
-    restart: always
-    environment:
-      HASURA_GRAPHQL_DATABASE_URL: postgres://data-hasura:data-hasura@data-db:5432/data-hasura
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
-      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
-      # admin secret — remove when not in dev environment
-      HASURA_GRAPHQL_ADMIN_SECRET: i-am-not-secure
+services:
 
   postgres:
     image: postgres
     container_name: postgres
     ports:
-      - '15432:5432'
+      - '${DB_PORT}:5432'
     command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
     environment:
-      POSTGRES_USER: data-hasura
-      POSTGRES_PASSWORD: data-hasura
-      POSTGRES_DB: data-hasura
-    environment:
-        PGOPTIONS: "--search_path=./packages/substrate-archive/schema.sql"
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+      # PGOPTIONS: "--search_path=./packages/substrate-archive/schema.sql"
     volumes:
-      - ./data/pg/graphql:/var/lib/postgresql/data
+      - ./data/pg:/var/lib/postgresql/data
 
-  substrate-archive:
-    image: 2075/substrate-archive:latest
-    container_name: archiver
-    restart: unless-stopped
-    command: ["--config","config"]
+  # polkadot:
+  #   image: chevdor/polkadot:latest
+  #   container_name: polkadot
+  #   restart: unless-stopped
+  #   ports:
+  #     - 30333:30333
+  #     - 9933:9933
+  #     - 9944:9944
+  #   command: ["polkadot", "--chain", "polkadot", "--name", "PolkadotArchiver", "--pruning", "archive"]
+  #   volumes:
+  #     - ./data/polkadot:/data
 
   substrate:
-    image: 2075/subzero:latest
+    image: parity/substrate:latest
     container_name: substrate
     restart: unless-stopped
     ports:
-      - "30333:30333"
-      - "9944:9944"
-      - "9933:9933"
+      - 30333:30333
+      - 9933:9933
+      - 9944:9944
+    command: ["--chain", "/config/substrate-dev.json", "--base-path", "/data", "--name", "SubstrateArchiver", "--pruning", "archive", "--alice", "--unsafe-rpc-external", "--unsafe-ws-external"]
     volumes:
+      - ./config:/config
       - ./data/substrate:/data
-    command: ["--name","substrate","--dev","--ws-external","--rpc-external","--rpc-cors","all"]
 
-  ipfs:
-    image: ipfs/go-ipfs
-    container_name: ipfs
+  graphql:
+    image: hasura/graphql-engine:latest
+    container_name: graphql
     ports:
-      - '15001:5001'
-    volumes:
-      - ./data/ipfs:/data/ipfs
+    - '${GQL_PORT}:8080'
+    depends_on:
+    - 'postgres'
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://${DB_USER}:${DB_PASS}@postgres:5432/${DB_NAME}
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      # admin secret — remove when not in dev environment
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "${GQL_CONSOLE}"
+      HASURA_GRAPHQL_ADMIN_SECRET: ${GQL_SECRET}
 
   adminer:
     image: adminer
     container_name: adminer
     restart: always
     ports:
-      - 18081:8080
+      - ${DB_ADMIN_PORT}:8080
     links:
       - postgres:postgres

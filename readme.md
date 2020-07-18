@@ -13,9 +13,24 @@ We have built a docker-compose to fire up the required elements pictured below:
 
 ![Schema](/doc/stack-basic.png)
 
+The main blocks to get started:
+
+	- make file - make all tasks a little easier
+	- .env file - paramaters used in docker-compose and one day in archiver
+	- config - configuration for the archiver
+
+1. make init
+2. make build — build archiver, based on substrate-archiver
+3. make up — run the stack
+4. make run — run the archiver
+
+archiver will move to a dockerimage as soon as possible.
+
 ## Status
 
-- [ ] docker-compose basic skeleton
+- [X] docker-compose basic skeleton
+- [ ] complete setup for polkadot
+- [ ] complete setup for custom substrate nodes (substrate node template)
 - [ ] config examples
 - [ ] tests
 - [ ] docker-compose with a load balancer example
