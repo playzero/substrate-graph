@@ -8,30 +8,30 @@ Interacting, archiving and querying transactions on blockchain nodes can become 
 An indexer provides unified acces to historic data.
 
 ## How
-
-We have built a docker-compose to fire up the required elements pictured below:
+We have built a docker-compose to fire up a stack as pictured below:
 
 ![Schema](/doc/stack-basic.png)
 
-How to get started:
+Get started:
 
-1. setup your env vars or start with a clone of .env.example
-2. setup your archiver config and chainspec in ./config
-3. docker-compose up
+0. clone the repo `git clone https://github.com/playzero/substrate-graph && cd substrate-graph`
+1. setup your env vars or start with a clone of `.env.example`
+2. setup your archiver config and chainspec in `./config`
+3. `docker-compose up`
 4. log in to hasura `localhost:18080` and enter your admin password
 5. on the data tab, add all untracked items
 6. have phun in graphiql
 
 ## Status
 
-- [X] docker-compose basic skeleton
-- [X] complete setup for polkadot
-- [X] complete setup for custom substrate nodes (substrate node template)
-- [X] config examples
-- [ ] tests
-- [ ] docker-compose
+- [X] add polkadot
+- [X] add custom substrate nodes (substrate node template)
+- [X] add config examples
+- [X] add docker-compose
 - [ ] add load balancer
-- [ ] add dashboard
+- [ ] add monitoring dashboard
+- [ ] add subscriptions
+- [ ] add frontend example
 
 ## Support us
 
