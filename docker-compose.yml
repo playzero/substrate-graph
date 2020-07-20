@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 # 0 postgres
 # 1 polkadot / substrate node
@@ -7,6 +7,23 @@ version: '3'
 # 4 adminer ( optional )
 
 services:
+
+  archive:
+    image: 2075/archiver:latest
+    container_name: archiver
+    restart: unless-stopped
+    command: ["-vv", "--config", "${ARCHIVER_CONFIG}", "--spec", "${CHAINSPEC}"]
+    volumes:
+      - ./config:/config
+      - ./data/substrate/chains/dev/db:/archive/data
+    links:
+      - postgres
+      - substrate
+    depends_on:
+      - postgres
+      - substrate
+    networks:
+      - backend
 
   postgres:
     image: postgres
@@ -18,9 +35,10 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
-      # PGOPTIONS: "--search_path=./packages/substrate-archive/schema.sql"
     volumes:
       - ./data/pg:/var/lib/postgresql/data
+    networks:
+      - backend
 
   # polkadot:
   #   image: chevdor/polkadot:latest
@@ -42,18 +60,20 @@ services:
       - 30333:30333
       - 9933:9933
       - 9944:9944
-    command: ["--chain", "/config/substrate-dev.json", "--base-path", "/data", "--name", "SubstrateArchiver", "--pruning", "archive", "--alice", "--unsafe-rpc-external", "--unsafe-ws-external"]
+    command: ["--chain", "/config/${CHAINSPEC}", "--base-path", "/data", "--name", "${NODE_NAME}", "--pruning", "archive", "--alice", "--unsafe-rpc-external", "--unsafe-ws-external", "--rpc-cors", "all"]
     volumes:
       - ./config:/config
       - ./data/substrate:/data
+    networks:
+      - backend
 
   graphql:
     image: hasura/graphql-engine:latest
     container_name: graphql
     ports:
-    - '${GQL_PORT}:8080'
+      - '${GQL_PORT}:8080'
     depends_on:
-    - 'postgres'
+      - 'postgres'
     restart: always
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://${DB_USER}:${DB_PASS}@postgres:5432/${DB_NAME}
@@ -61,12 +81,19 @@ services:
       # admin secret — remove when not in dev environment
       HASURA_GRAPHQL_ENABLE_CONSOLE: "${GQL_CONSOLE}"
       HASURA_GRAPHQL_ADMIN_SECRET: ${GQL_SECRET}
+    networks:
+      - frontend
+      - backend
 
-  adminer:
-    image: adminer
-    container_name: adminer
-    restart: always
-    ports:
-      - ${DB_ADMIN_PORT}:8080
-    links:
-      - postgres:postgres
+  # adminer:
+  #   image: adminer
+  #   container_name: adminer
+  #   restart: always
+  #   ports:
+  #     - ${DB_ADMIN_PORT}:8080
+  #   links:
+  #     - postgres:postgres
+
+networks:
+    backend:
+    frontend:
