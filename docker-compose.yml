@@ -8,8 +8,66 @@ version: '3.4'
 
 services:
 
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   volumes:
+  #     - ./data/grafana/data:/var/lib/grafana
+  #     - ./data/grafana/provisioning:/etc/grafana/provisioning
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
+  #     - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASS}
+  #     - GF_USERS_ALLOW_SIGN_UP=false
+  #   restart: unless-stopped
+  #   ports:
+  #     - ${GF_PORT}:3000
+  #   networks:
+  #     - backend
+  #     - frontend
+  #   labels:
+  #     org.label-schema.group: "monitoring"
+
+  #
+  #   P O L K A D O T
+  #
+
+  # archive:
+  #   image: 2075/archiver-polkadot:latest
+  #   container_name: archiver
+  #   restart: unless-stopped
+  #   command: ["-vv", "--config", "config/polkadot.toml"]
+  #   volumes:
+  #     - ./config:/config
+  #     - ./data/substrate/chains/dev/db:/archive/data
+  #   links:
+  #     - postgres
+  #     - polkadot
+  #   depends_on:
+  #     - postgres
+  #     - polkadot
+  #   networks:
+  #     - backend
+
+  # polkadot:
+  #   image: parity/polkadot:latest
+  #   container_name: polkadot
+  #   restart: unless-stopped
+  #   ports:
+  #     - 30333:30333
+  #     - 9933:9933
+  #     - 9944:9944
+  #   command: ["--chain", "polkadot", "--name", "PolkadotArchiver", "--pruning", "archive"]
+  #   volumes:
+  #     - ./data/polkadot:/data
+  #   networks:
+  #     - backend
+
+  #
+  #   S U B S T R A T E
+  #
+
   archive:
-    image: 2075/archiver:latest
+    image: 2075/archiver-substrate:latest
     container_name: archiver
     restart: unless-stopped
     command: ["-vv", "--config", "${ARCHIVER_CONFIG}", "--spec", "${CHAINSPEC}"]
@@ -22,6 +80,21 @@ services:
     depends_on:
       - postgres
       - substrate
+    networks:
+      - backend
+
+  substrate:
+    image: parity/substrate:latest
+    container_name: substrate
+    restart: unless-stopped
+    ports:
+      - 30333:30333
+      - 9933:9933
+      - 9944:9944
+    command: ["--chain", "${CHAINSPEC}", "--base-path", "/data", "--name", "${NODE_NAME}", "--pruning", "archive", "--alice", "--validator", "--unsafe-rpc-external", "--unsafe-ws-external", "--rpc-cors", "all"]
+    volumes:
+      - ./config:/config
+      - ./data/substrate:/data
     networks:
       - backend
 
@@ -40,35 +113,8 @@ services:
     networks:
       - backend
 
-  # polkadot:
-  #   image: chevdor/polkadot:latest
-  #   container_name: polkadot
-  #   restart: unless-stopped
-  #   ports:
-  #     - 30333:30333
-  #     - 9933:9933
-  #     - 9944:9944
-  #   command: ["polkadot", "--chain", "polkadot", "--name", "PolkadotArchiver", "--pruning", "archive"]
-  #   volumes:
-  #     - ./data/polkadot:/data
-
-  substrate:
-    image: parity/substrate:latest
-    container_name: substrate
-    restart: unless-stopped
-    ports:
-      - 30333:30333
-      - 9933:9933
-      - 9944:9944
-    command: ["--chain", "/config/${CHAINSPEC}", "--base-path", "/data", "--name", "${NODE_NAME}", "--pruning", "archive", "--alice", "--unsafe-rpc-external", "--unsafe-ws-external", "--rpc-cors", "all"]
-    volumes:
-      - ./config:/config
-      - ./data/substrate:/data
-    networks:
-      - backend
-
   graphql:
-    image: hasura/graphql-engine:latest
+    image: hasura/graphql-engine:v1.3.0
     container_name: graphql
     ports:
       - '${GQL_PORT}:8080'
