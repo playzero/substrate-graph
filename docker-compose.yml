@@ -8,25 +8,6 @@ version: '3.4'
 
 services:
 
-  # grafana:
-  #   image: grafana/grafana:latest
-  #   container_name: grafana
-  #   volumes:
-  #     - ./data/grafana/data:/var/lib/grafana
-  #     - ./data/grafana/provisioning:/etc/grafana/provisioning
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASS}
-  #     - GF_USERS_ALLOW_SIGN_UP=false
-  #   restart: unless-stopped
-  #   ports:
-  #     - ${GF_PORT}:3000
-  #   networks:
-  #     - backend
-  #     - frontend
-  #   labels:
-  #     org.label-schema.group: "monitoring"
-
   #
   #   P O L K A D O T
   #
@@ -131,6 +112,8 @@ services:
       - frontend
       - backend
 
+  #   db admin
+
   # adminer:
   #   image: adminer
   #   container_name: adminer
@@ -139,6 +122,27 @@ services:
   #     - ${DB_ADMIN_PORT}:8080
   #   links:
   #     - postgres:postgres
+
+  #   monitoring
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: grafana
+  #   volumes:
+  #     - ./data/grafana/data:/var/lib/grafana
+  #     - ./data/grafana/provisioning:/etc/grafana/provisioning
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=${GF_ADMIN_USER}
+  #     - GF_SECURITY_ADMIN_PASSWORD=${GF_ADMIN_PASS}
+  #     - GF_USERS_ALLOW_SIGN_UP=false
+  #   restart: unless-stopped
+  #   ports:
+  #     - ${GF_PORT}:3000
+  #   networks:
+  #     - backend
+  #     - frontend
+  #   labels:
+  #     org.label-schema.group: "monitoring"
 
 networks:
     backend:

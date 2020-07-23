@@ -22,16 +22,25 @@ Get started:
 5. on the data tab, add all untracked items
 6. have phun in graphiql
 
+## Frontend
+
+An example app has been created in packages/substrate-graph-frontend:
+`cd ./packages/substrate-graph-frontend && yarn`
+`yarn start`
+
+if everything runs smoothly, you will see a graphql subscription rendering into a block number and a small table showing recent blocks and contents.
+
 ## Status
 
 - [X] add polkadot
 - [X] add custom substrate nodes (substrate node template)
 - [X] add config examples
 - [X] add docker-compose
-- [ ] add load balancer
+- [X] add subscriptions
+- [X] add frontend example
 - [ ] add monitoring dashboard
-- [ ] add subscriptions
-- [ ] add frontend example
+- [ ] add load balancer
+- [ ] kubernetes / helm chart
 
 ## Support us
 
