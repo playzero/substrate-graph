@@ -64,6 +64,11 @@ Currently an older archive version is used for building the docker images, which
 - [ ] add load balancer
 - [ ] kubernetes / helm chart
 
+## Discuss
+
+Join us on Discord: [ZERO on Discord](https://discord.gg/gtya5Dv)
+
+
 ## Support us
 
 Donations welcome: gamedao.eth / 0x5ae30612FC6CDA7190a5195cdA95107605450dF4
