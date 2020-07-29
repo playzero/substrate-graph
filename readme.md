@@ -61,8 +61,9 @@ Currently an older archive version is used for building the docker images, which
 - [X] add subscriptions
 - [X] add frontend example
 - [ ] add monitoring dashboard
-- [ ] add load balancer
+- [ ] add load balancer example
 - [ ] kubernetes / helm chart
+- [ ] add crawler / harvester
 
 ## Discuss
 
