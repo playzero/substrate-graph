@@ -3,6 +3,8 @@
 ## What
 A compact indexer for @paritytech substrate based nodes providing a graphql interface.
 
+![Realtime](/doc/realtime.gif)
+
 ## Why
 Interacting, archiving and querying transactions on blockchain nodes can become expensive.
 An indexer provides unified access to historic data. Parsing and creating complex interfaces with this data is cumbersome when using REST, GraphQL offers the latest and greatest to query, subscribe and mutate data leading to efficient data structures and therefore hopefully cleaner code and better (D)Apps.
@@ -65,14 +67,11 @@ Currently an older archive version is used for building the docker images, which
 - [ ] kubernetes / helm chart
 - [ ] add crawler / harvester
 
+- [ ] add
+
 ## Discuss
 
 Join us on Discord: [ZERO on Discord](https://discord.gg/gtya5Dv)
-
-
-## Support us
-
-Donations welcome: gamedao.eth / 0x5ae30612FC6CDA7190a5195cdA95107605450dF4
 
 ## Credits
 
