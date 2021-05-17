@@ -4,3 +4,6 @@
 [submodule "packages/substrate-graph-frontend"]
 	path = packages/substrate-graph-frontend
 	url = https://github.com/playzero/substrate-graph-frontend
+[submodule "packages/substrate-api-sidecar"]
+	path = packages/substrate-api-sidecar
+	url = git@github.com:playzero/substrate-api-sidecar.git
